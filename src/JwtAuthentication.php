@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace Jsantos;
-use \Jsantos\Exception\{
+namespace Sanjos;
+use \Sanjos\Exception\{
     InvalidTokenException, 
     InvalidTokenOptionException};
 

@@ -2,7 +2,7 @@
 
 namespace Tests;
 use \PHPUnit\Framework\TestCase;
-use \Jsantos\JwtAuthentication;
+use \Sanjos\JwtAuthentication;
 
 class TestJwt extends TestCase {
 

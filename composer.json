@@ -1,5 +1,5 @@
 {
-    "name": "jsantos/jwtauth",
+    "name": "sanjos/jwtauth",
     "description": "JWT Authentication",
     "type": "library",
     "license": "MIT",
@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Jsantos\\" : "src/"
+            "Sanjos\\" : "src/"
         }
     },
     "require": {

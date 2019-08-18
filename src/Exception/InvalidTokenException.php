@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Jsantos\Exception;
+namespace Sanjos\Exception;
 
 class InvalidTokenException extends \Exception {
 
