@@ -1,2 +1,2 @@
-# jwt
+# JWT
 Simple JsonWebToken with PHP
