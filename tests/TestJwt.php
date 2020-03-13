@@ -27,4 +27,23 @@ class TestJwt extends TestCase
         $this->assertInstanceOf(JwtAuthentication::class, $jwt);
         $this->assertEquals(true, $jwt->isValid($jwt->getToken()));
     }
+
+    /**
+     * @testdox Should test if values of token is correct
+     *
+     * @return void
+     */
+    public function testJwtValues()
+    {
+        $jwt = JwtAuthentication::getInstance(null);
+
+        $jwt->setPayload([
+            'uuid'  => 'uuidTest',
+            'email' => 'jeconiass2009@hotmail.com'
+        ]);
+
+        $payload = $jwt->getPayload();
+        $this->assertEquals('uuidTest', $payload->uuid);
+        $this->assertEquals('jeconiass2009@hotmail.com', $payload->email);
+    }
 }

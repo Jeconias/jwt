@@ -29,11 +29,25 @@ final class JwtAuthentication
     private array $header = [];
 
     /**
+     * Header JsonWebToken
+     * 
+     * @var string $headerB64
+     */
+    private string $headerB64 = '';
+
+    /**
      * Payload JsonWebToken
      * 
      * @var array $payload
      */
     private array $payload = [];
+
+    /**
+     * Payload JsonWebToken
+     * 
+     * @var string $payloadB64
+     */
+    private string $payloadB64 = '';
 
     /**
      * Options for validate and generate token
@@ -64,7 +78,7 @@ final class JwtAuthentication
             'exp'       => $time + ($this->options->getLifeTime() * 60),
         ];
 
-        $this->header = $this->base64Encode(json_encode($this->header, JSON_UNESCAPED_UNICODE));
+        $this->headerB64 = $this->base64Encode(json_encode($this->header, JSON_UNESCAPED_UNICODE));
     }
 
     public static function getInstance(?Options $options): JwtAuthentication
@@ -79,13 +93,13 @@ final class JwtAuthentication
             $this->payload['context'][$key] = $value;
         }
 
-        $this->payload = $this->base64Encode(json_encode($this->payload, JSON_UNESCAPED_UNICODE));
+        $this->payloadB64 = $this->base64Encode(json_encode($this->payload, JSON_UNESCAPED_UNICODE));
         return $this;
     }
 
     public function getPayload(): object
     {
-        return $this->payload->context;
+        return (object) $this->payload['context'];
     }
 
     public function getToken(): string
@@ -116,7 +130,7 @@ final class JwtAuthentication
 
         if (hash_equals($signature, $hash) !== true) throw new InvalidTokenException('Invalid Token.');
 
-        $this->payload = $payloadObj;
+        $this->payload = (array) $payloadObj;
 
         return true;
     }
@@ -139,11 +153,9 @@ final class JwtAuthentication
 
     private function signature(): string
     {
-        $this->payload = (gettype($this->payload) === "array") ? json_encode($this->base64Encode($this->payload), JSON_UNESCAPED_UNICODE) : $this->payload;
-
         $alg = isset(self::ALGS[$this->options->getAlg()]) ? self::ALGS[$this->options->getAlg()] : $this->options->getAlg();
-        $signature = hash_hmac($alg, "$this->header.$this->payload", $this->options->getKey(), true);
+        $signature = hash_hmac($alg, "$this->headerB64.$this->payloadB64", $this->options->getKey(), true);
 
-        return "$this->header.$this->payload.{$this->base64Encode($signature)}";
+        return "$this->headerB64.$this->payloadB64.{$this->base64Encode($signature)}";
     }
 }
