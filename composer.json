@@ -1,24 +1,24 @@
 {
-    "name": "sanjos/jwtauth",
-    "description": "JWT Authentication",
-    "type": "library",
-    "version": "1.0.0",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Jeconias Santos",
-            "email": "jeconiass2009@hotmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Sanjos\\" : "src/"
-        }
-    },
-    "require": {
-        "php": ">=7.1.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^8.3"
+  "name": "sanjos/jwtauth",
+  "description": "JWT Authentication",
+  "type": "library",
+  "version": "1.0.0",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jeconias Santos",
+      "email": "jeconiass2009@hotmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Sanjos\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.4.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.3"
+  }
 }
