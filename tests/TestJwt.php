@@ -7,6 +7,9 @@ namespace Tests;
 use PHPUnit\Framework\TestCase;
 use Sanjos\JwtAuthentication;
 
+/**
+ * @testdox Test generate JWT
+ */
 class TestJwt extends TestCase
 {
 
@@ -45,5 +48,28 @@ class TestJwt extends TestCase
         $payload = $jwt->getPayload();
         $this->assertEquals('uuidTest', $payload->uuid);
         $this->assertEquals('jeconiass2009@hotmail.com', $payload->email);
+    }
+
+    /**
+     * @testdox Should test if values of token is correct when "isValid" is called
+     *
+     * @return void
+     */
+    public function testJwtValuesWithIsValid()
+    {
+        $jwt = JwtAuthentication::getInstance(null);
+
+        $jwt->setPayload([
+            'uuid'  => 'uuidTest2',
+            'github' => 'github.com/jeconias'
+        ]);
+
+        $token = $jwt->getToken();
+
+        $this->assertEquals(true, $jwt->isValid($token));
+
+        $payload = $jwt->getPayload();
+        $this->assertEquals('uuidTest2', $payload->uuid);
+        $this->assertEquals('github.com/jeconias', $payload->github);
     }
 }

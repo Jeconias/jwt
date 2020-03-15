@@ -29,13 +29,6 @@ final class JwtAuthentication
     private array $header = [];
 
     /**
-     * Header JsonWebToken
-     * 
-     * @var string $headerB64
-     */
-    private string $headerB64 = '';
-
-    /**
      * Payload JsonWebToken
      * 
      * @var array $payload
@@ -43,11 +36,11 @@ final class JwtAuthentication
     private array $payload = [];
 
     /**
-     * Payload JsonWebToken
-     * 
-     * @var string $payloadB64
+     * Last Token context
+     *
+     * @var object $token
      */
-    private string $payloadB64 = '';
+    private object $token;
 
     /**
      * Options for validate and generate token
@@ -78,7 +71,7 @@ final class JwtAuthentication
             'exp'       => $time + ($this->options->getLifeTime() * 60),
         ];
 
-        $this->headerB64 = $this->base64Encode(json_encode($this->header, JSON_UNESCAPED_UNICODE));
+        //$this->headerB64 = $this->base64Encode(json_encode($this->header, JSON_UNESCAPED_UNICODE));
     }
 
     public static function getInstance(?Options $options): JwtAuthentication
@@ -93,13 +86,14 @@ final class JwtAuthentication
             $this->payload['context'][$key] = $value;
         }
 
-        $this->payloadB64 = $this->base64Encode(json_encode($this->payload, JSON_UNESCAPED_UNICODE));
+        $this->token = (object) $this->payload['context'];
+
         return $this;
     }
 
     public function getPayload(): object
     {
-        return (object) $this->payload['context'];
+        return $this->token;
     }
 
     public function getToken(): string
@@ -121,7 +115,7 @@ final class JwtAuthentication
 
         if (false === $signature = $this->base64Decode($signature)) throw new InvalidTokenException('Invalid token signature.');
 
-        if ($headerObj->alg != $this->options->getAlg()) throw new InvalidTokenException('Invalid token algorithm.');
+        if ($headerObj->alg !== $this->options->getAlg()) throw new InvalidTokenException('Invalid token algorithm.');
 
         if ($payloadObj->exp < time()) throw new InvalidTokenException('Token expired.');
 
@@ -130,7 +124,7 @@ final class JwtAuthentication
 
         if (hash_equals($signature, $hash) !== true) throw new InvalidTokenException('Invalid Token.');
 
-        $this->payload = (array) $payloadObj;
+        $this->token = $payloadObj->context;
 
         return true;
     }
@@ -153,9 +147,12 @@ final class JwtAuthentication
 
     private function signature(): string
     {
-        $alg = isset(self::ALGS[$this->options->getAlg()]) ? self::ALGS[$this->options->getAlg()] : $this->options->getAlg();
-        $signature = hash_hmac($alg, "$this->headerB64.$this->payloadB64", $this->options->getKey(), true);
+        $headerB64 = $this->base64Encode(json_encode($this->header, JSON_UNESCAPED_UNICODE));
+        $payloadB64 = $this->base64Encode(json_encode($this->payload, JSON_UNESCAPED_UNICODE));
 
-        return "$this->headerB64.$this->payloadB64.{$this->base64Encode($signature)}";
+        $alg = isset(self::ALGS[$this->options->getAlg()]) ? self::ALGS[$this->options->getAlg()] : $this->options->getAlg();
+        $signature = hash_hmac($alg, "$headerB64.$payloadB64", $this->options->getKey(), true);
+
+        return "$headerB64.$payloadB64.{$this->base64Encode($signature)}";
     }
 }
