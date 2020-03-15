@@ -10,6 +10,9 @@
       "email": "jeconiass2009@hotmail.com"
     }
   ],
+  "scripts": {
+    "test": "phpunit --testdox --color='always' ./tests/TestJwt.php"
+  },
   "autoload": {
     "psr-4": {
       "Sanjos\\": "src/"
